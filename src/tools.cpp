@@ -3,6 +3,7 @@
 #include "tools.h"
 
 #define TOTAL_STATE_VARIABLES 4
+#define MIN_FLOAT_VALUE 0.000001
 
 using Eigen::VectorXd;
 using Eigen::MatrixXd;
@@ -41,13 +42,15 @@ MatrixXd Tools::CalculateJacobian(const VectorXd &x_state) {
       vy = x_state(3);
 
   // pre-compute a set of terms used several times in Jacobian
-  const double
+  double
       c1 = px * px + py * py,
       c2 = sqrt(c1),
       c3 = c2 * c1;
 
   // ensure that c1 is not zero, otherwise terms will lead to division by zero
-  assert(fabs(c1) > 0.00001);
+  if (fabs(c1) < MIN_FLOAT_VALUE) {
+    c1 = MIN_FLOAT_VALUE;
+  }
 
   // compute Jacobian matrix
   Hj <<

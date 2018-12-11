@@ -1,5 +1,7 @@
 #include "kalman_filter.h"
 
+#define MIN_FLOAT_VALUE 0.000001
+
 using Eigen::MatrixXd;
 using Eigen::VectorXd;
 
@@ -30,14 +32,22 @@ void KalmanFilter::UpdateEKF(const VectorXd &z) {
   * update the state by using Extended Kalman Filter equations
   * assuming H_ is set to the Jacobian matrix for the current step
   */
-  const double
+  double
       px = x_(0),
       py = x_(1),
       vx = x_(2),
       vy = x_(3);
 
+  if (fabs(py) < MIN_FLOAT_VALUE) {
+    px = MIN_FLOAT_VALUE;
+  }
+
+  if (fabs(py) < MIN_FLOAT_VALUE) {
+    py = MIN_FLOAT_VALUE;
+  }
+
   // Convert state to measurement space
-  const double
+  double
       rho = sqrt(px * px + py * py),
       phi = atan(py / px),
       rho_dot = (px * vx + py * vy) / rho;
