@@ -1,7 +1,10 @@
 #include "kalman_filter.h"
+#include <math.h>
+#include <iostream>
 
 #define MIN_FLOAT_VALUE 0.000001
 
+using namespace std;
 using Eigen::MatrixXd;
 using Eigen::VectorXd;
 
@@ -38,7 +41,7 @@ void KalmanFilter::UpdateEKF(const VectorXd &z) {
       vx = x_(2),
       vy = x_(3);
 
-  if (fabs(py) < MIN_FLOAT_VALUE) {
+  if (fabs(px) < MIN_FLOAT_VALUE) {
     px = MIN_FLOAT_VALUE;
   }
 
@@ -49,13 +52,21 @@ void KalmanFilter::UpdateEKF(const VectorXd &z) {
   // Convert state to measurement space
   double
       rho = sqrt(px * px + py * py),
-      phi = atan(py / px),
+      phi = atan2(py, px),
       rho_dot = (px * vx + py * vy) / rho;
+
+  // cout << "phi: " << phi << endl;
 
   VectorXd h = VectorXd(3);
   h << rho, phi, rho_dot;
 
   VectorXd y = z - h;
+
+  // Adjust resulting phi in y to be between -pi and pi
+  while(y(1) < -M_PI || y(1) > M_PI) {
+    y(1) += (y(1) < -M_PI) ? 2*M_PI : -2*M_PI;
+  }
+
   UpdateByResidual(z, y);
 }
 
