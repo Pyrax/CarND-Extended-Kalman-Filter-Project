@@ -10,7 +10,7 @@
 #include "tools.h"
 
 class FusionEKF {
-public:
+ public:
   /**
   * Constructor.
   */
@@ -31,7 +31,7 @@ public:
   */
   KalmanFilter ekf_;
 
-private:
+ private:
   // check whether the tracking toolbox was initialized or not (first measurement)
   bool is_initialized_;
 
@@ -40,6 +40,7 @@ private:
 
   // tool object used to compute Jacobian and RMSE
   Tools tools;
+
   Eigen::MatrixXd R_laser_;
   Eigen::MatrixXd R_radar_;
   Eigen::MatrixXd H_laser_;

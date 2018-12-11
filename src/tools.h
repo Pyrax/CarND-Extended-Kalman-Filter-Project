@@ -8,7 +8,7 @@ using Eigen::VectorXd;
 using namespace std;
 
 class Tools {
-public:
+ public:
   /**
   * Constructor.
   */
@@ -27,7 +27,7 @@ public:
   /**
   * A helper method to calculate Jacobians.
   */
-  MatrixXd CalculateJacobian(const VectorXd& x_state);
+  MatrixXd CalculateJacobian(const VectorXd &x_state);
 
 };
 
