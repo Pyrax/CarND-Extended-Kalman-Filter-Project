@@ -38,7 +38,12 @@ FusionEKF::FusionEKF() {
   * Set the process and measurement noises
   */
 
-  ekf_.F_ = MatrixXd::Zero(4, 4);
+  ekf_.F_ = MatrixXd(4, 4);
+  ekf_.F_ <<
+      1, 0, 0, 0,
+      0, 1, 0, 0,
+      0, 0, 1, 0,
+      0, 0, 0, 1;
 
   // initial state covariance matrix P
   ekf_.P_ = MatrixXd(4, 4);
@@ -60,8 +65,6 @@ FusionEKF::FusionEKF() {
 FusionEKF::~FusionEKF() {}
 
 void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
-
-  previous_timestamp_ = measurement_pack.timestamp_;
 
   /*****************************************************************************
    *  Initialization
@@ -108,6 +111,7 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
 
     // done initializing, no need to predict or update
     is_initialized_ = true;
+    previous_timestamp_ = measurement_pack.timestamp_;
     return;
   }
 
@@ -123,6 +127,7 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
    */
 
   const float dt = (measurement_pack.timestamp_ - previous_timestamp_) / (1000.0f * 1000.0f);  // convert from µs to s
+  previous_timestamp_ = measurement_pack.timestamp_;
 
   // compute new F according to time passed
   ekf_.F_(0, 2) = dt;
